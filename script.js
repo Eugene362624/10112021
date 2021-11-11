@@ -36,8 +36,8 @@ async function main(...uris) {
         })
 }
 
-async function getData(url) {
-    return await axios.get(url)
+function getData(url) {
+    return axios.get(url)
 }
 
 function excel(responses, cleanParams, isMatch, requests) {
