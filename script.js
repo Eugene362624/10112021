@@ -13,12 +13,16 @@ async function main(...uris) {
             let dirtyParams = []
             let cleanParams = []
             let requests = []
+            let resByUri = [{}]
             let isMatch = false
+
             responsesArr.map(e => {
                 requests.push(e.config.url)
                 e.data.length ? responses.push(e.data) : responses.push(['Пустой ответ'])
                 dirtyParams.push(e.config.url.split('?')[1])
             })
+
+            console.log(resByUri)
 
             // pushing to the clean params arr
             dirtyParams.map(e => cleanParams.push(e.split("&").join(', ')))
@@ -28,7 +32,7 @@ async function main(...uris) {
                 responses[0].toString() == responses[i].toString() ? isMatch = true : isMatch = false
             }
 
-            excel(uris, responses, cleanParams, isMatch, requests)
+            excel(responses, cleanParams, isMatch, requests)
         })
 }
 
@@ -36,7 +40,7 @@ async function getData(url) {
     return await axios.get(url)
 }
 
-function excel(uris, responses, cleanParams, isMatch, requests) {
+function excel(responses, cleanParams, isMatch, requests) {
 
     let wb = new xl.Workbook()
     let ws = wb.addWorksheet('Response checker')
@@ -54,7 +58,7 @@ function excel(uris, responses, cleanParams, isMatch, requests) {
     ws.cell(1, 3).string('Response')
     ws.cell(1, 4).string('Match for all')
     ws.cell(1, 5).string('Match by params')
-    console.log(requests)
+
     //filling url params column by cycle
     for(let i = 2; i<requests.length+2; i++) {
         ws.cell(i, 1).string(requests[i-2])
