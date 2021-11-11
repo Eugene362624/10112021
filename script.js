@@ -5,7 +5,8 @@ async function main(...uris) {
     const hosts = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002']
     let promises = []
     let requestsUrls = []
-    hosts.map(host => uris.map(uri => requestsUrls.push(host + uri)))
+    requestsUrls.push(hosts.map(host => uris.map(uri => host + uri)))
+    requestsUrls = requestsUrls.flat(Infinity)
     promises = requestsUrls.map(url => getData(url))
     Promise.all(promises)
         .then(responsesArr => {
@@ -18,11 +19,12 @@ async function main(...uris) {
 
             uris.map(e => resByUri.push({params: e.split('?')[1], data: [], match: true}))
 
-            responsesArr.map(e => {
-                requests.push(e.config.url)
-                e.data.length ? responses.push(e.data) : responses.push(['Пустой ответ'])
-                dirtyParams.push(e.config.url.split('?')[1])
-            })
+            for(let i = 0; i<responsesArr.length; i++) {
+                requests.push(responsesArr[i].config.url)
+                responsesArr[i].data.length ? responses.push(responsesArr[i].data) : responses.push(['Пустой ответ'])
+                dirtyParams.push(responsesArr[i].config.url.split('?')[1])
+
+            }
 
             for (let i = 0; i < responses.length; i++) {
                 resByUri[i%uris.length].data.push(responses[i].toString())
@@ -42,7 +44,10 @@ async function main(...uris) {
             }
 
             // pushing to the clean params arr
-            dirtyParams.map(e => cleanParams.push(e.split("&").join(', ')))
+            for (let i =0; i< dirtyParams.length; i++) {
+                cleanParams.push(dirtyParams[i].split("&").join(', '))
+            }
+            // dirtyParams.map(e => cleanParams.push(e.split("&").join(', ')))
 
             // checking match for all
             for (let i = 0; i < responses.length; i++) {
