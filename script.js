@@ -38,8 +38,6 @@ async function main() {
 
             for (let i = 0; i < resByUri.length; i++) {
                 let match = false
-                // "испачкал" респонсы чтобы проверить проверку
-                // resByUri[1].data[1] = ''
                 resByUri[i].data.forEach((e, o) => {
                     match = (resByUri[i].data[o + 1] ? e == resByUri[i].data[o + 1] : e == resByUri[i].data[0])
                     if (!match) resByUri[i].match = false
