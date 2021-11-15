@@ -1,34 +1,15 @@
 import axios from "axios";
 import xl from 'excel4node'
-import fs from "fs"
 import xlsx from 'xlsx'
 
 const excelFile = xlsx.readFile('./excel.xlsx')
 const sheet = excelFile.Sheets[excelFile.SheetNames[0]]
 
-const config = [
-    // {
-    //     host: 'http://localhost:3000',
-    //     headers: {
-    //         "Authorization": "Bearer dsadsdas"
-    //     }
-    // },
-    // {
-    //     host: 'http://localhost:3001',
-    //     headers: {
-    //         "Authorization": "Bearer 321321312"
-    //     }
-    // },
-    // {
-    //     host: 'http://localhost:3002',
-    //     headers: {
-    //         "Authorization": "Bearer d21312dsa"
-    //     }
-    // },
-]
+const config = []
 const uris = []
 const hosts = []
 const headers = []
+
 for(let i = 2; i > 0; i++) {
     if (!sheet['A'+i]) break
     config.push({host: sheet['A'+i].v, headers: sheet["B"+i].v})
@@ -36,7 +17,6 @@ for(let i = 2; i > 0; i++) {
     headers.push(sheet["B"+i].v)
     hosts.push(sheet["A"+i].v)
 }
-
 
 async function main() {
     let requests = config.map(req => uris.map(uri => ({url: req.host + uri, headers: req.headers, uri: uri})))
@@ -101,6 +81,7 @@ function writeExcel(requests, resByUri) {
         ws.cell(i, 1).string(hosts[i - 2])
     }
 
+    //filling headers column 
     for (let i = 2; i < headers.length + 2; i++) {
         ws.cell(i, 2).string(headers[i-2])
     }
