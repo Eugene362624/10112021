@@ -1,6 +1,6 @@
 import axios from "axios";
 import xlsx from 'xlsx'
-import * as util from "util";
+import {isDeepStrictEqual} from "util";
 
 const excelFile = xlsx.readFile('./excel-new.xlsx')
 const excel = excelFile.Sheets[excelFile.SheetNames[0]]
@@ -30,16 +30,11 @@ async function main() {
         try {
             const results = await Promise.all(httpReqs);
             const responses = results.map(result => result.data);
-            row[`Is Match`] = responses.every(item => util.isDeepStrictEqual(item, responses[0]))
-            console.log(responses);
+            row[`Is Match`] = responses.every(item => isDeepStrictEqual(item, responses[0]))
             for (let i = 0; i < responses.length; i++) {
-                console.log(responses[i]);
                 row[`Host ${i}`] = JSON.stringify(responses[i])
             }
-
-            console.log(row);
         } catch(e) {
-            console.log(e);
             row['Is Match'] = false;
             row['Error'] = `ERROR ${e.response.status} while loading url ${e.config.url}`
         }
